@@ -5,7 +5,8 @@ on:
     branches:
       - main
 
-
+env:
+  DOTNET_VERSION: 5.0.x
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,7 +18,16 @@ jobs:
       - name: setup .net
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '5.0.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      
+      - name: install sql server
+        run:
+          docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=P@ssw0rd" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest
+
+      - name: Sleep for 30 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '30s'
 
       - name: restore dependencies
         run: dotnet restore
@@ -26,15 +36,19 @@ jobs:
         run: dotnet build -c Release --no-restore
 
       - name: run tests
+        env:
+          ConnectionStrings__Default: server=localhost;database=DemoGithubActions_Tests;user id =sa;password=P@ssw0rd
+
         run: dotnet test -c Release --no-build 
 
       - name: publish app
+      
         run: dotnet publish -c Release -o ./out 
 
 
-      - name: publish to azure
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: DemoGithubActions1
-          publish-profile: ${{ secrets.AZURE_SECRET }}
-          package: ./out
+      # - name: publish to azure
+      #   uses: azure/webapps-deploy@v2
+      #   with:
+      #     app-name: DemoGithubActions1
+      #     publish-profile: ${{ secrets.AZURE_SECRET }}
+      #     package: ./out
