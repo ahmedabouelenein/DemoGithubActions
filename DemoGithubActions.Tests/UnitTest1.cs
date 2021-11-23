@@ -8,7 +8,7 @@ namespace DemoGithubActions.Tests
         [Fact]
         public void FakeTest()
         {
-            Assert.True(1 == 1);
+            Assert.True(1 == 0);
         }
     }
 }
