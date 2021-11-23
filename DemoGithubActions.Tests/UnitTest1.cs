@@ -6,9 +6,9 @@ namespace DemoGithubActions.Tests
     public class UnitTest1
     {
         [Fact]
-        public void Test1()
+        public void FakeTest()
         {
-
+            Assert.True(1 == 1);
         }
     }
 }
