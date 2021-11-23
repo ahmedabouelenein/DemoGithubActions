@@ -27,3 +27,9 @@ jobs:
 
       - name: run tests
         run: dotnet test -c Release --no-build
+
+      - name: publish to azure
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: DemoGithubActions1
+          publish-profile: ${{ AZURE_SECRET }}
